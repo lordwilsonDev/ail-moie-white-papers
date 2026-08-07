@@ -1,0 +1,31 @@
+{
+  "scored_outputs": [
+    {
+      "item_id": "ex-001",
+      "condition": "C1-bon",
+      "novelty_score": 0.42,
+      "coherence_score": 0.89,
+      "blind_code": "a3f2"
+    },
+    {
+      "item_id": "ex-002",
+      "condition": "C4",
+      "novelty_score": 0.67,
+      "coherence_score": 0.85,
+      "blind_code": "b7c1"
+    },
+    {
+      "item_id": "ex-003",
+      "condition": "C5",
+      "novelty_score": 0.81,
+      "coherence_score": 0.83,
+      "blind_code": "d9e4"
+    }
+  ],
+  "meta": {
+    "model": "ollama:llama3.1:8b",
+    "seed": 42,
+    "n_per_condition": 30,
+    "blind": true
+  }
+}

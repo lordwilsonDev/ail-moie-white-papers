@@ -1,0 +1,82 @@
+[
+  {
+    "id": "PHY-01",
+    "domain": "physics",
+    "text": "Why is the observed cosmological constant so many orders of magnitude smaller than quantum field theory predicts?"
+  },
+  {
+    "id": "PHY-02",
+    "domain": "physics",
+    "text": "What determines the arrow of time in systems where the underlying dynamics are time-symmetric?"
+  },
+  {
+    "id": "PHY-03",
+    "domain": "physics",
+    "text": "Why does turbulence resist a closed-form statistical description?"
+  },
+  {
+    "id": "PHY-04",
+    "domain": "physics",
+    "text": "What accounts for the apparent fine-tuning of nuclear resonance levels required for stellar carbon production?"
+  },
+  {
+    "id": "BIO-01",
+    "domain": "biology",
+    "text": "Why does biological aging occur at such different rates across species of similar body size?"
+  },
+  {
+    "id": "BIO-02",
+    "domain": "biology",
+    "text": "What determines which of an organism's genes become developmentally canalized?"
+  },
+  {
+    "id": "BIO-03",
+    "domain": "biology",
+    "text": "Why do some complex traits evolve repeatedly and independently while others appear only once?"
+  },
+  {
+    "id": "BIO-04",
+    "domain": "biology",
+    "text": "What explains the persistence of sexual reproduction despite its twofold cost?"
+  },
+  {
+    "id": "ECO-01",
+    "domain": "economics",
+    "text": "Why has measured productivity growth slowed in advanced economies despite rapid technological change?"
+  },
+  {
+    "id": "ECO-02",
+    "domain": "economics",
+    "text": "What determines whether an institution becomes extractive or inclusive over long time horizons?"
+  },
+  {
+    "id": "ECO-03",
+    "domain": "economics",
+    "text": "Why do asset bubbles recur despite widespread knowledge of prior bubbles?"
+  },
+  {
+    "id": "ECO-04",
+    "domain": "economics",
+    "text": "What explains persistent wage differentials across firms for identical worker skill profiles?"
+  },
+  {
+    "id": "COG-01",
+    "domain": "cognitive science",
+    "text": "Why does human episodic memory reconstruct rather than replay?"
+  },
+  {
+    "id": "COG-02",
+    "domain": "cognitive science",
+    "text": "What determines which concepts become linguistically encoded across unrelated languages?"
+  },
+  {
+    "id": "COG-03",
+    "domain": "cognitive science",
+    "text": "Why does expertise in one domain transfer so poorly to structurally similar domains?"
+  },
+  {
+    "id": "COG-04",
+    "domain": "cognitive science",
+    "text": "What accounts for the discrepancy between introspective reports and measured decision processes?"
+  }
+]
