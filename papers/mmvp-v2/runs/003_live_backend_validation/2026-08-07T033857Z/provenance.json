@@ -1,0 +1,8 @@
+{
+  "providers": [
+    "mock"
+  ],
+  "run_id": "2026-08-07T033857Z",
+  "mission_id": "003_live_backend_validation",
+  "per_question": []
+}
