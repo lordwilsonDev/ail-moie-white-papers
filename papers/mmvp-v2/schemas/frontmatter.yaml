@@ -1,0 +1,30 @@
+schema: paper-frontmatter
+version: 1.0.0
+required_fields:
+  - id
+  - title
+  - version
+  - date
+  - status
+  - license
+  - format
+fields:
+  id:
+    type: string
+    pattern: '^[a-z0-9-]+$'
+  title:
+    type: string
+    minLength: 5
+  version:
+    type: string
+  date:
+    type: string
+    format: date
+  status:
+    type: string
+    enum: [draft, review, published]
+  license:
+    type: string
+  format:
+    type: string
+    enum: [markdown, pdf, both]

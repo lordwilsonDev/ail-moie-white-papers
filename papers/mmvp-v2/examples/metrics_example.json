@@ -1,0 +1,12 @@
+{
+  "artifact_id": "mmvp-v2",
+  "metrics": {
+    "CR": 0.78,
+    "CTR": 0.12,
+    "SS": 0.85,
+    "DI": 0.34,
+    "EC": 0.67,
+    "VC": 0.72
+  },
+  "note": "Example metrics from a synthetic 4-model run"
+}
