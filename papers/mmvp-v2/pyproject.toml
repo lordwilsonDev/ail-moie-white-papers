@@ -1,0 +1,9 @@
+[project]
+name = "mmvp-v2"
+version = "2.0.0"
+description = "Multi-Model Verification Protocol runtime"
+requires-python = ">=3.11"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
