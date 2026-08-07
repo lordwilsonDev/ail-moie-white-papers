@@ -37,6 +37,22 @@ services (see `../CHECKLIST.md`) are the ones to build first as real,
 live forms; the rest can stay as this reference until the business
 expands into that category.
 
+## Generating live Google Forms
+`generate_google_forms.gs` turns the 10 Phase 0 forms into real Google
+Forms in one run — no manual form-building required:
+1. Go to https://script.google.com → New project.
+2. Paste in the contents of `generate_google_forms.gs`.
+3. Run `createIntakeForms`, authorize the prompts (it only touches
+   Forms/Sheets/Drive files it creates itself).
+4. It creates a Google Sheet, **"Intake Forms — Links"**, in your Drive
+   with the editor URL and the public "send to clients" URL for each of
+   the 10 forms.
+
+Re-running creates a fresh set rather than updating existing ones — delete
+the old forms first if regenerating. To add the remaining 99 services from
+the other category files, copy a form-definition block in
+`getFormDefinitions()` and adapt the fields from the matching `.md` file.
+
 ## Common fields (every form, not repeated per-service below)
 - Business name
 - Contact name
