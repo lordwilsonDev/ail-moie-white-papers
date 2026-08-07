@@ -92,10 +92,18 @@ Fill out the form, upload your file, get a price on the spot: [link]
 ```
 
 ## Channel checklist
+Primary channels — direct, relationship-driven, and fully in your control:
 - [ ] DM/email 5 local bookkeepers or accountants with the referral message
+- [ ] DM/email anyone in your existing network who owns or runs a small
+      business (contractors, restaurant owners, local shops) directly —
+      warm outreach converts fastest for a brand-new offer
 - [ ] Post the direct-outreach message in 2-3 relevant local Facebook
       business groups or r/smallbusiness (check each community's
       self-promotion rules first)
-- [ ] List all three services as fixed-price gigs on Upwork and/or Fiverr
 - [ ] Add the pricing page link to the description field of each of the
       three Google Forms
+
+Fallback only — do not lead with these; marketplaces put you in a bidding
+war and you don't control who lands on the form:
+- [ ] Upwork/Fiverr fixed-price listings, only if the primary channels
+      above haven't produced a client after a real attempt
