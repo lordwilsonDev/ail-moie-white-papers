@@ -37,6 +37,9 @@ class TestEndToEnd:
         assert report.question == MISSION_QUESTION
         assert len(report.models) == 3
         assert 0.0 <= report.confidence["score"] <= 1.0
+        assert 0.0 <= report.confidence["evidence_provenance_score"] <= 1.0
+        assert 0.0 <= report.confidence["model_independence_score"] <= 1.0
+        assert "verification_gain" in report.confidence
         assert report.timestamp
 
     def test_report_has_json_output(self):

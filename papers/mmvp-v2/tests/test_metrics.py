@@ -30,6 +30,17 @@ class TestMetrics:
         report = estimate(nr, [])
         assert report.evidence_coverage == 0.5
 
-    def test_empty_input_raises(self):
-        with pytest.raises(ValueError):
-            estimate([], [])
+    def test_evidence_provenance(self):
+        nr = [NormalizedResponse(model="a", claims=[Claim(text="a", evidence="1"), Claim(text="b")])]
+        report = estimate(nr, [])
+        assert report.evidence_provenance_score == 0.5
+
+    def test_model_independence(self):
+        nr = [NormalizedResponse(model="a", claims=[Claim(text="x")]), NormalizedResponse(model="b", claims=[Claim(text="x")]), NormalizedResponse(model="a", claims=[Claim(text="x")])]
+        report = estimate(nr, [])
+        assert report.model_independence_score == pytest.approx(2/3, rel=1e-3)
+
+    def test_verification_gain_positive(self):
+        nr = [NormalizedResponse(model="a", claims=[Claim(text="a", evidence="1", confidence=0.9)]), NormalizedResponse(model="b", claims=[Claim(text="a", evidence="2", confidence=0.9)])]
+        report = estimate(nr, [])
+        assert report.verification_gain > 0

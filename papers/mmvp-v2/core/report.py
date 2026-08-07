@@ -35,6 +35,7 @@ class VerificationReport:
                 "model": nr.model,
                 "claims": [c.text for c in nr.claims],
                 "raw": nr.raw,
+                "evidence_sources": [c.source for c in nr.claims if c.source],
             } for nr in normalized],
             contradictions=[{
                 "claim_a": c.claim_a,
@@ -49,6 +50,10 @@ class VerificationReport:
                 "stability": confidence.stability,
                 "evidence_coverage": confidence.evidence_coverage,
                 "contradiction_rate": confidence.contradiction_rate,
+                "evidence_provenance_score": confidence.evidence_provenance_score,
+                "model_independence_score": confidence.model_independence_score,
+                "verification_gain": confidence.verification_gain,
+                "details": confidence.details,
             },
             models=list({nr.model for nr in normalized}),
         )
@@ -65,11 +70,18 @@ class VerificationReport:
         }, indent=2)
 
     def summary(self) -> str:
+        confidence = self.confidence
         lines = [
             f"MMVP Report | {self.timestamp}",
             f"Question: {self.question}",
             f"Models: {', '.join(self.models) if self.models else 'none'}",
-            f"Confidence: {self.confidence.get('score', 0.0):.2f}",
+            f"Confidence: {confidence.get('score', 0.0):.2f}",
+            f"Agreement: {confidence.get('agreement', 0.0):.2f}",
+            f"Contradiction Rate: {confidence.get('contradiction_rate', 0.0):.2f}",
+            f"Evidence Coverage: {confidence.get('evidence_coverage', 0.0):.2f}",
+            f"Evidence Provenance: {confidence.get('evidence_provenance_score', 0.0):.2f}",
+            f"Model Independence: {confidence.get('model_independence_score', 0.0):.2f}",
+            f"Verification Gain: {confidence.get('verification_gain', 0.0):.2f}",
             f"Contradictions: {len(self.contradictions)}",
         ]
         return "\n".join(lines)

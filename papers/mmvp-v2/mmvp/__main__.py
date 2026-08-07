@@ -1,4 +1,4 @@
-from . import verify
+from . import main
 
 if __name__ == "__main__":
-    raise SystemExit(verify())
+    raise SystemExit(main())
