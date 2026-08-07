@@ -24,13 +24,15 @@ recurring engagements (AI virtual employees, automation-as-a-service).
 | `CHECKLIST.md` | Phased launch checklist, entry → recurring revenue |
 | `SPEC.md` | Artifact contract / how to extend this catalog |
 | `intake-forms/` | One async, no-call intake form per service (109 total) |
+| `PHASE1_LAUNCH.md` | Fixed pricing + outreach messages for the Phase 1 launch three |
 
 ## Quick Start
 Read `BLUEPRINT.md` for the full catalog and business model. Read
 `RATIONALE.md` for the reasoning behind the phased growth strategy. Use
 `CHECKLIST.md` when planning a launch sequence. Use `intake-forms/` to
 stand up the actual client-facing forms — every service is scoped by a
-form, never a call.
+form, never a call. Use `PHASE1_LAUNCH.md` to actually price and sell the
+first three services.
 
 ## Artifact ID
 `ai-business-services-blueprint`
