@@ -9,6 +9,9 @@ artifact. It defines:
 3. The rationale for category ordering and growth sequencing
    (`RATIONALE.md`)
 4. A phased launch checklist (`CHECKLIST.md`)
+5. One async intake form per service (`intake-forms/`), covering all 109
+   services in `BLUEPRINT.md`, each self-contained enough to scope and
+   price a job without a live call
 
 ## Extending the Catalog
 To add a new service:
@@ -22,6 +25,9 @@ To add a new service:
    a core category.
 4. Update `CHECKLIST.md` if the new service changes the recommended launch
    sequence.
+5. Add a matching form block to the relevant file in `intake-forms/`. The
+   form must be sufficient on its own to scope and price the job — if it
+   isn't, the service isn't ready for the catalog yet.
 
 ## Non-Goals
 This artifact does not specify pricing, legal/compliance requirements per

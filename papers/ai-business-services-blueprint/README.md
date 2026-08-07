@@ -23,11 +23,14 @@ recurring engagements (AI virtual employees, automation-as-a-service).
 | `RATIONALE.md` | Why this category structure and growth path |
 | `CHECKLIST.md` | Phased launch checklist, entry → recurring revenue |
 | `SPEC.md` | Artifact contract / how to extend this catalog |
+| `intake-forms/` | One async, no-call intake form per service (109 total) |
 
 ## Quick Start
 Read `BLUEPRINT.md` for the full catalog and business model. Read
 `RATIONALE.md` for the reasoning behind the phased growth strategy. Use
-`CHECKLIST.md` when planning a launch sequence.
+`CHECKLIST.md` when planning a launch sequence. Use `intake-forms/` to
+stand up the actual client-facing forms — every service is scoped by a
+form, never a call.
 
 ## Artifact ID
 `ai-business-services-blueprint`
