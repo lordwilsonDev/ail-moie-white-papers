@@ -42,9 +42,19 @@ Automation, CRM Automation. Revisit these once a written (non-call) intake
 questionnaire exists that can replace a discovery call.
 
 ## Phase 1 — Entry Services (low complexity, fast trust-building)
-- [ ] Pick 2-3 services from Phase 0 as the initial offer
+**Chosen launch three:** Invoice Processing, AI Data Entry, Spreadsheet
+Cleanup. Picked over the other seven Phase 0 services because they are
+recurring by nature (fresh batch every month, not a one-off), hard to
+DIY (unlike PDF Summarization / Content Generation, which a client could
+just paste into ChatGPT themselves), and bundle cleanly into a single
+"bookkeeping cleanup" pitch to accountants/bookkeepers as a referral
+channel.
 - [ ] Define fixed-price packages for each (scope, turnaround, price)
-- [ ] Land first 3-5 paying clients, sourced and closed without a call
+- [ ] Stand up the 3 matching Google Forms (`intake-forms/generate_google_forms.gs`
+      already covers all three)
+- [ ] Land first 3-5 paying clients, sourced and closed without a call —
+      target channels: local bookkeepers/accountants (referral), r/smallbusiness,
+      local Facebook business groups, fixed-price Upwork/Fiverr gigs
 - [ ] Collect at least one case study / testimonial
 
 ## Phase 2 — Automation & Virtual Employees (higher value, recurring-ready)
