@@ -1,0 +1,710 @@
+<title>RSVP Works</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  /* ============ TOKENS ============ */
+  :root {
+    --ground: #edeae3;
+    --surface: #f6f4ef;
+    --surface-2: #e3ded3;
+    --ink: #201d18;
+    --ink-soft: #57503f;
+    --ink-faint: #8a8271;
+    --line: #ccc5b6;
+    --line-strong: #b3ab99;
+    --accent: #d9760a;
+    --accent-ink: #1c1206;
+    --bright: #ffb100;
+    --steel: #33465a;
+    --good: #3f7d4e;
+
+    --shadow: 0 1px 0 rgba(32,29,24,.04), 0 18px 40px -28px rgba(32,29,24,.45);
+    --mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --maxw: 1120px;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #17150f;
+      --surface: #201d15;
+      --surface-2: #2a2519;
+      --ink: #f1ece0;
+      --ink-soft: #b6ac97;
+      --ink-faint: #8d8471;
+      --line: #362f22;
+      --line-strong: #4a4130;
+      --accent: #ff9418;
+      --accent-ink: #1c1206;
+      --bright: #ffbd2e;
+      --steel: #8aa2ba;
+      --good: #6fbf82;
+      --shadow: 0 1px 0 rgba(0,0,0,.3), 0 22px 44px -26px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #17150f;
+    --surface: #201d15;
+    --surface-2: #2a2519;
+    --ink: #f1ece0;
+    --ink-soft: #b6ac97;
+    --ink-faint: #8d8471;
+    --line: #362f22;
+    --line-strong: #4a4130;
+    --accent: #ff9418;
+    --accent-ink: #1c1206;
+    --bright: #ffbd2e;
+    --steel: #8aa2ba;
+    --good: #6fbf82;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 22px 44px -26px rgba(0,0,0,.8);
+  }
+
+  /* ============ BASE ============ */
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 { font-weight: 800; line-height: 1.03; letter-spacing: -0.02em; text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(20px, 5vw, 48px); }
+
+  /* utility label — the "work order" voice */
+  .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+  }
+  .kicker .no { color: var(--ink-faint); }
+
+  /* measurement rule divider — tick marks like a tape measure */
+  .rule {
+    height: 14px;
+    border-top: 1.5px solid var(--line-strong);
+    background-image: repeating-linear-gradient(90deg, var(--line-strong) 0 1px, transparent 1px 24px);
+    background-position: 0 0;
+    background-size: 24px 8px;
+    background-repeat: repeat-x;
+    opacity: .75;
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--sans); font-weight: 700; font-size: 15px;
+    padding: 14px 22px; border-radius: 4px; border: 1.5px solid transparent;
+    cursor: pointer; text-decoration: none; white-space: nowrap;
+    transition: transform .12s ease, background .18s ease, box-shadow .18s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 20px -10px var(--accent); }
+  .btn-primary:hover { background: var(--bright); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+  .btn-ghost:hover { border-color: var(--ink); }
+  .btn svg { width: 17px; height: 17px; }
+
+  /* ============ STICKY HEADER ============ */
+  header.bar {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar-in { display: flex; align-items: center; gap: 18px; height: 66px; }
+  .brand { display: flex; align-items: baseline; gap: 8px; text-decoration: none; margin-right: auto; }
+  .brand .mark {
+    font-family: var(--sans); font-weight: 800; letter-spacing: -0.03em; font-size: 21px; color: var(--ink);
+  }
+  .brand .mark b { color: var(--accent); }
+  .brand .llc { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: var(--ink-faint); text-transform: uppercase; }
+  nav.links { display: flex; gap: 26px; }
+  nav.links a { font-size: 14.5px; font-weight: 600; color: var(--ink-soft); text-decoration: none; }
+  nav.links a:hover { color: var(--ink); }
+  .bar .call { font-family: var(--mono); font-weight: 600; font-size: 14px; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+  .bar .call svg { width: 15px; height: 15px; color: var(--accent); }
+  .themebtn {
+    width: 38px; height: 38px; border-radius: 4px; border: 1.5px solid var(--line-strong);
+    background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; flex: none;
+  }
+  .themebtn:hover { border-color: var(--ink); }
+  .themebtn svg { width: 17px; height: 17px; }
+  @media (max-width: 860px) { nav.links, .bar .call span { display: none; } }
+
+  /* ============ HERO ============ */
+  .hero { position: relative; overflow: hidden; }
+  .hero-in { padding: clamp(56px, 9vw, 104px) 0 clamp(40px, 6vw, 72px); position: relative; }
+  .hero .grid-bg {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 46px 46px;
+    -webkit-mask-image: radial-gradient(120% 90% at 78% 0%, #000 0%, transparent 62%);
+    mask-image: radial-gradient(120% 90% at 78% 0%, #000 0%, transparent 62%);
+    opacity: .5;
+  }
+  .hero-in > * { position: relative; z-index: 1; }
+  .hero h1 {
+    font-size: clamp(46px, 8.6vw, 104px);
+    letter-spacing: -0.035em;
+    margin: 20px 0 0;
+    max-width: 14ch;
+  }
+  .hero h1 .em { color: var(--accent); }
+  .hero .sub {
+    margin-top: 22px; font-size: clamp(17px, 2.3vw, 21px); color: var(--ink-soft);
+    max-width: 52ch; line-height: 1.5;
+  }
+  .hero .cta-row { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .hero .stars { display: flex; align-items: center; gap: 12px; margin-top: 30px; font-family: var(--mono); font-size: 13px; color: var(--ink-soft); flex-wrap: wrap; }
+  .hero .stars .s { color: var(--bright); letter-spacing: 2px; font-size: 15px; }
+  .hero .stars .dot { color: var(--line-strong); }
+
+  /* ============ SECTION SHELL ============ */
+  section.blk { padding: clamp(56px, 8vw, 96px) 0; }
+  .sec-head { max-width: 62ch; }
+  .sec-head h2 { font-size: clamp(30px, 4.6vw, 48px); margin-top: 16px; }
+  .sec-head p.lede { margin-top: 16px; font-size: 18px; color: var(--ink-soft); }
+
+  /* problem → solution */
+  .problem { background: var(--ink); color: #f4efe4; }
+  .problem .kicker { color: var(--bright); }
+  .problem h2 { color: #fff; }
+  .problem .lede { color: #cfc7b6; }
+  .steps { margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; overflow: hidden; }
+  .steps .step { background: var(--ink); padding: 28px 26px; }
+  .steps .step .n { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; color: var(--bright); }
+  .steps .step h3 { font-size: 21px; margin-top: 14px; color: #fff; }
+  .steps .step p { margin-top: 10px; color: #c3bbaa; font-size: 15.5px; }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+
+  /* services */
+  .svc-grid { margin-top: 44px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .svc-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .svc-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px 22px;
+    box-shadow: var(--shadow); position: relative; transition: transform .15s ease, border-color .15s ease;
+  }
+  .svc-grid .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .card .ic { width: 34px; height: 34px; color: var(--accent); }
+  .card h3 { font-size: 18.5px; margin-top: 16px; letter-spacing: -0.01em; }
+  .card p { margin-top: 8px; font-size: 14.5px; color: var(--ink-soft); line-height: 1.5; }
+  .card .idx { position: absolute; top: 18px; right: 20px; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+
+  /* why us */
+  .why { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .why-grid { margin-top: 44px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .why-grid { grid-template-columns: 1fr; } }
+  .why .item { padding: 22px 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--ground); }
+  .why .item .ic { width: 26px; height: 26px; color: var(--accent); }
+  .why .item h3 { font-size: 16.5px; margin-top: 14px; }
+  .why .item p { font-size: 14px; color: var(--ink-soft); margin-top: 7px; }
+
+  /* proof / reviews */
+  .rev-grid { margin-top: 44px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 760px) { .rev-grid { grid-template-columns: 1fr; } }
+  .review { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 26px 26px 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .review .s { color: var(--bright); letter-spacing: 3px; font-size: 16px; }
+  .review blockquote { margin: 14px 0 0; font-size: 17.5px; line-height: 1.55; color: var(--ink); font-weight: 500; }
+  .review .who { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line-strong); display: flex; align-items: center; gap: 12px; }
+  .review .av { width: 38px; height: 38px; border-radius: 50%; background: var(--surface-2); color: var(--ink); display: grid; place-items: center; font-weight: 800; font-size: 15px; flex: none; }
+  .review .who .nm { font-weight: 700; font-size: 15px; }
+  .review .who .meta { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); letter-spacing: .04em; }
+  .rev-foot { margin-top: 22px; font-family: var(--mono); font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 10px; }
+  .rev-foot .g { font-weight: 700; }
+  .rev-foot .g b:nth-child(1){color:#4285F4} .rev-foot .g b:nth-child(2){color:#EA4335} .rev-foot .g b:nth-child(3){color:#FBBC05} .rev-foot .g b:nth-child(4){color:#4285F4} .rev-foot .g b:nth-child(5){color:#34A853} .rev-foot .g b:nth-child(6){color:#EA4335}
+
+  /* about */
+  .about-grid { margin-top: 40px; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(24px, 5vw, 56px); align-items: center; }
+  @media (max-width: 820px) { .about-grid { grid-template-columns: 1fr; } }
+  .about .portrait {
+    aspect-ratio: 4/5; border-radius: 10px; border: 1px solid var(--line-strong);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 22px, color-mix(in srgb, var(--ink) 4%, transparent) 22px 23px),
+      var(--surface-2);
+    display: grid; place-items: center; text-align: center; color: var(--ink-faint); padding: 24px;
+  }
+  .about .portrait .ph { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .about .portrait svg { width: 46px; height: 46px; opacity: .5; margin-bottom: 12px; }
+  .about h2 { font-size: clamp(28px, 4vw, 42px); }
+  .about p { margin-top: 18px; font-size: 17px; color: var(--ink-soft); line-height: 1.62; }
+  .about .verify { margin-top: 18px; font-family: var(--mono); font-size: 12px; color: var(--ink-faint); border-left: 2px solid var(--accent); padding-left: 12px; }
+
+  /* gallery */
+  .gallery { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .gal-grid { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .gal-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .gal-grid { grid-template-columns: 1fr; } }
+  .tile {
+    aspect-ratio: 4/3; border-radius: 8px; border: 1.5px dashed var(--line-strong);
+    background: var(--ground); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    color: var(--ink-faint); text-align: center; padding: 16px;
+  }
+  .tile svg { width: 30px; height: 30px; opacity: .55; }
+  .tile .lab { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; }
+  .tile .cap { font-size: 13px; color: var(--ink-soft); }
+
+  /* service area */
+  .area-grid { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(22px, 4vw, 48px); align-items: start; }
+  @media (max-width: 760px) { .area-grid { grid-template-columns: 1fr; } }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .chip { font-family: var(--mono); font-size: 13px; padding: 8px 14px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink); background: var(--surface); }
+  .chip.q { color: var(--ink-faint); border-style: dashed; }
+
+  /* ============ QUOTE / FORM ============ */
+  .quote { background: var(--ink); color: #f4efe4; }
+  .quote .kicker { color: var(--bright); }
+  .quote-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(28px, 5vw, 60px); align-items: start; }
+  @media (max-width: 860px) { .quote-grid { grid-template-columns: 1fr; } }
+  .quote h2 { color: #fff; font-size: clamp(30px, 4.4vw, 46px); margin-top: 16px; }
+  .quote .lede { color: #c9c0af; margin-top: 16px; font-size: 18px; line-height: 1.55; }
+  .quote .callbig {
+    margin-top: 28px; display: inline-flex; align-items: center; gap: 12px; text-decoration: none;
+    font-family: var(--mono); font-size: clamp(22px, 4vw, 30px); font-weight: 700; color: #fff; letter-spacing: -0.01em;
+  }
+  .quote .callbig svg { width: 26px; height: 26px; color: var(--bright); }
+  .quote .assure { margin-top: 22px; display: grid; gap: 10px; }
+  .quote .assure li { list-style: none; display: flex; align-items: center; gap: 10px; color: #c9c0af; font-size: 15px; }
+  .quote .assure svg { width: 17px; height: 17px; color: var(--good); flex: none; }
+
+  form.card { background: var(--surface); color: var(--ink); padding: clamp(24px, 3vw, 34px); border-radius: 12px; }
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+  .field label .req { color: var(--accent); }
+  .field label .opt { color: var(--ink-faint); text-transform: none; letter-spacing: 0; }
+  .field input, .field select, .field textarea {
+    font-family: var(--sans); font-size: 15.5px; color: var(--ink); background: var(--ground);
+    border: 1.5px solid var(--line-strong); border-radius: 6px; padding: 12px 13px; width: 100%;
+  }
+  .field textarea { resize: vertical; min-height: 96px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .dropzone {
+    border: 1.5px dashed var(--line-strong); border-radius: 8px; padding: 18px; text-align: center;
+    color: var(--ink-faint); font-size: 13.5px; background: var(--ground); cursor: default;
+  }
+  .dropzone .mono { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; display: block; margin-bottom: 6px; color: var(--ink-soft); }
+  form .submit { margin-top: 20px; width: 100%; justify-content: center; font-size: 16px; padding: 16px; }
+  form .fineprint { margin-top: 12px; font-size: 12.5px; color: var(--ink-faint); text-align: center; }
+  .form-success { display: none; text-align: center; padding: 30px 10px; }
+  .form-success.on { display: block; }
+  .form-success .ok { width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%; background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); display: grid; place-items: center; }
+  .form-success .ok svg { width: 28px; height: 28px; }
+  .form-success h3 { font-size: 22px; }
+  .form-success p { margin-top: 10px; color: var(--ink-soft); }
+  @media (max-width: 520px) { .fgrid { grid-template-columns: 1fr; } }
+
+  /* ============ FOOTER ============ */
+  footer { padding: 44px 0 40px; border-top: 1px solid var(--line); }
+  .foot-in { display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: center; justify-content: space-between; }
+  footer .brand .mark { font-size: 18px; }
+  footer .fmeta { font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); letter-spacing: .04em; line-height: 1.7; }
+  footer a.fcall { color: var(--ink); text-decoration: none; font-weight: 600; }
+  .draft-note { margin-top: 26px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); border: 1px dashed var(--line-strong); border-radius: 6px; padding: 12px 14px; line-height: 1.6; }
+</style>
+
+<!-- ============ HEADER ============ -->
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="#top" aria-label="RSVP Works LLC home">
+      <span class="mark">RSVP&nbsp;<b>Works</b></span>
+      <span class="llc">LLC</span>
+    </a>
+    <nav class="links" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#about">About</a>
+      <a href="#area">Service Area</a>
+    </nav>
+    <a class="call" href="tel:+19202057788"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg><span>(920)&nbsp;205-7788</span></a>
+    <a class="btn btn-primary" href="#quote">Get a Free Quote</a>
+    <button class="themebtn" id="themebtn" aria-label="Toggle light and dark theme" title="Toggle theme">
+      <svg id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="wrap hero-in">
+      <p class="kicker"><span class="no">01</span> Handyman &amp; Home Improvement · Fox Valley, WI</p>
+      <h1>Done is the <span class="em">new Perfect.</span></h1>
+      <p class="sub">Reliable handyman and remodeling work across Appleton and the Fox Valley — the projects you've been putting off, finished right, at a fair price.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#quote">Get a Free Quote</a>
+        <a class="btn btn-ghost" href="tel:+19202057788"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Call (920) 205-7788</a>
+      </div>
+      <div class="stars">
+        <span class="s">★★★★★</span>
+        <span>5.0 on Google</span>
+        <span class="dot">·</span>
+        <span>Verified customer reviews</span>
+        <span class="dot">·</span>
+        <span>Locally owned</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROBLEM → SOLUTION ============ -->
+  <section class="blk problem">
+    <div class="wrap">
+      <p class="kicker"><span class="no">02</span> The problem, solved</p>
+      <h2>Got a project you've been putting off?</h2>
+      <p class="lede">A cracked wall. A leaky toilet. A room that needs paint. A tree the storm left in your yard. You don't need five different contractors — you need one person who shows up, does it right, and cleans up after.</p>
+      <div class="steps">
+        <div class="step">
+          <span class="n">CAN YOU FIX IT?</span>
+          <h3>Almost certainly, yes</h3>
+          <p>From drywall and paint to plumbing repairs, flooring, and full remodels — one call covers the whole punch list.</p>
+        </div>
+        <div class="step">
+          <span class="n">CAN I TRUST YOU?</span>
+          <h3>Read the reviews</h3>
+          <p>Five-star ratings from Fox Valley neighbors who mention fair pricing, careful work, and a job left clean.</p>
+        </div>
+        <div class="step">
+          <span class="n">HOW DO I START?</span>
+          <h3>Request a free quote</h3>
+          <p>Tell us what you need — send a photo if you've got one — and get a fast, fair estimate. No pressure.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES ============ -->
+  <section class="blk" id="services">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker"><span class="no">03</span> What we do</p>
+        <h2>One point of contact for the whole house.</h2>
+        <p class="lede">Interior and exterior, big jobs and small fixes. If it's on your list, it's probably on ours.</p>
+      </div>
+      <div class="svc-grid">
+        <div class="card"><span class="idx">01</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 10h18M9 4v16"/></svg>
+          <h3>Drywall &amp; Repairs</h3><p>Hanging, patching, taping, and finishing — walls and ceilings that look seamless.</p>
+        </div>
+        <div class="card"><span class="idx">02</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l3 3v3a2 2 0 0 1-2 2H8"/><path d="M8 15v3a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1v-4z"/><path d="M15 7V4H8v3"/></svg>
+          <h3>Interior Painting</h3><p>Clean lines, protected floors and trim, no drips. Rooms, ceilings, and full interiors.</p>
+        </div>
+        <div class="card"><span class="idx">03</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>
+          <h3>Remodeling</h3><p>Kitchens, baths, garages, and basements — updated to fit how you actually live.</p>
+        </div>
+        <div class="card"><span class="idx">04</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v4H3zM3 14h18v4H3z"/><path d="M7 6v4M13 6v4M10 14v4M16 14v4"/></svg>
+          <h3>Flooring</h3><p>Laminate, vinyl plank, tile, and repairs — installed level and built to last.</p>
+        </div>
+        <div class="card"><span class="idx">05</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l3 3-4 4-3-3zM10 8l-6 6v3h3l6-6M14 14l3 3"/></svg>
+          <h3>Plumbing Repairs</h3><p>Toilets, faucets, seals, and leaks — the small fixes that shouldn't cost a fortune.</p>
+        </div>
+        <div class="card"><span class="idx">06</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 3l4 2M12 3l-4 2"/><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16"/></svg>
+          <h3>Furniture Assembly</h3><p>Flat-pack, complicated builds, and mounting — assembled right the first time.</p>
+        </div>
+        <div class="card"><span class="idx">07</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20V9l6-5 6 5v11"/><path d="M9 20v-5h6v5M3 12l9-7 9 7"/></svg>
+          <h3>Storm Damage Repair</h3><p>Fast response for tree, wind, and water damage — repairs done quickly and fairly.</p>
+        </div>
+        <div class="card"><span class="idx">08</span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6 6 2 2 6-6a4 4 0 0 0 5.4-5.4l-2.3 2.3-2-2z"/></svg>
+          <h3>General Handyman</h3><p>The whole punch list — mounting, doors, trim, odd jobs, and the things nobody else will take.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="rule"></div></div>
+
+  <!-- ============ WHY US ============ -->
+  <section class="blk why">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker"><span class="no">04</span> Why RSVP Works</p>
+        <h2>The reputation is already built. Here's what's behind it.</h2>
+      </div>
+      <div class="why-grid">
+        <div class="item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <h3>Local</h3><p>Based in the Fox Valley. Your neighbors, not a franchise call center.</p>
+        </div>
+        <div class="item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <h3>Responsive</h3><p>Quotes come back fast. Calls get answered. Jobs get scheduled.</p>
+        </div>
+        <div class="item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <h3>Fair Pricing</h3><p>Honest estimates and no surprises — a recurring theme in the reviews.</p>
+        </div>
+        <div class="item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+          <h3>Quality Work</h3><p>Careful prep, clean finishes, and a site left tidy when the job's done.</p>
+        </div>
+        <div class="item">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          <h3>One Contact</h3><p>Deal with the person doing the work — start to finish, no runaround.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROOF / REVIEWS ============ -->
+  <section class="blk" id="reviews">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker"><span class="no">05</span> Proof</p>
+        <h2>Fox Valley homeowners, in their own words.</h2>
+        <p class="lede">Real five-star reviews from Google. The reputation exists — this page just gives it somewhere to work.</p>
+      </div>
+      <div class="rev-grid">
+        <div class="review">
+          <span class="s">★★★★★</span>
+          <blockquote>"Quality work, affordable pricing. Excellent job of drywall install and painting in final finish of garage. Care was taken in prevention of paint drips and clean up from install."</blockquote>
+          <div class="who"><div class="av">D</div><div><div class="nm">Donald Schultz</div><div class="meta">Remodeling · Drywall · Painting</div></div></div>
+        </div>
+        <div class="review">
+          <span class="s">★★★★★</span>
+          <blockquote>"I hired Ryan for handyman services to make repairs after a storm brought down a tree. His quote came in fast and fair. He was able to make the repairs quickly."</blockquote>
+          <div class="who"><div class="av">M</div><div><div class="nm">Michelle</div><div class="meta">Storm damage repair</div></div></div>
+        </div>
+        <div class="review">
+          <span class="s">★★★★★</span>
+          <blockquote>"I hired Ryan to assemble a complicated end table. He made the assembly look easy although it wasn't, and he did it at a very fair price. I'll hire Ryan again whenever I need help with a project."</blockquote>
+          <div class="who"><div class="av">R</div><div><div class="nm">R. — verified Google review</div><div class="meta">Furniture assembly</div></div></div>
+        </div>
+        <div class="review">
+          <span class="s">★★★★★</span>
+          <blockquote>"Painting, two rooms in our house — high barrel ceilings and walls. Was very particular about protecting the trim and floors, used tarps and protectors."</blockquote>
+          <div class="who"><div class="av">J</div><div><div class="nm">James Rouse</div><div class="meta">Local Guide · Interior painting</div></div></div>
+        </div>
+      </div>
+      <p class="rev-foot"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · <span>Reviews shown are from the RSVP Works LLC Google Business Profile.</span></p>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="blk about" id="about">
+    <div class="wrap about-grid">
+      <div class="portrait" aria-hidden="true">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          <div class="ph">Photo of Ryan</div>
+        </div>
+      </div>
+      <div>
+        <p class="kicker"><span class="no">06</span> Who you're hiring</p>
+        <h2>Meet Ryan.</h2>
+        <p>RSVP Works LLC is owned and run by Ryan Schultz, a Fox Valley handyman and remodeler who built the business on doing careful work at a fair price — and on treating every home like it's his own. When you call, you're talking to the person who'll actually do the job.</p>
+        <p>That's the difference the reviews keep pointing to: one trustworthy point of contact, from the first quote to the final cleanup.</p>
+        <p class="verify">▸ Placeholder bio — swap in Ryan's verified story (background, years in the trade, LinkedIn) before publishing. His real history is more compelling than any stand-in copy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY ============ -->
+  <section class="blk gallery">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="kicker"><span class="no">07</span> The work</p>
+        <h2>Before &amp; after.</h2>
+        <p class="lede">For handyman and remodeling work, seeing the result closes the deal. Drop real project photos into these slots.</p>
+      </div>
+      <div class="gal-grid">
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-6 6"/></svg><span class="lab">Add photo</span><span class="cap">Kitchen / bath remodel</span></div>
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-6 6"/></svg><span class="lab">Add photo</span><span class="cap">Drywall &amp; paint</span></div>
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-6 6"/></svg><span class="lab">Add photo</span><span class="cap">Flooring install</span></div>
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-6 6"/></svg><span class="lab">Add photo</span><span class="cap">Storm damage repair</span></div>
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-6 6"/></svg><span class="lab">Add photo</span><span class="cap">Trim &amp; finish carpentry</span></div>
+        <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-6 6"/></svg><span class="lab">Add photo</span><span class="cap">Garage / basement</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICE AREA ============ -->
+  <section class="blk" id="area">
+    <div class="wrap area-grid">
+      <div>
+        <p class="kicker"><span class="no">08</span> Where we work</p>
+        <h2 style="font-size:clamp(28px,4vw,42px);margin-top:16px;">Serving Appleton &amp; the Fox Valley.</h2>
+        <p class="lede">Home service across the communities of northeast Wisconsin's Fox Cities. Not sure if you're in range? Just ask.</p>
+        <p class="verify" style="font-family:var(--mono);font-size:12px;color:var(--ink-faint);border-left:2px solid var(--accent);padding-left:12px;margin-top:20px;">▸ Confirm exact cities &amp; travel radius with Ryan before publishing. Dashed chips are likely-but-unconfirmed.</p>
+      </div>
+      <div>
+        <div class="chips">
+          <span class="chip">Appleton</span>
+          <span class="chip">Neenah</span>
+          <span class="chip">Menasha</span>
+          <span class="chip">Kaukauna</span>
+          <span class="chip">Grand Chute</span>
+          <span class="chip q">Kimberly</span>
+          <span class="chip q">Little Chute</span>
+          <span class="chip q">Combined Locks</span>
+          <span class="chip q">Greenville</span>
+          <span class="chip q">Oshkosh</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUOTE / FORM ============ -->
+  <section class="blk quote" id="quote">
+    <div class="wrap quote-grid">
+      <div>
+        <p class="kicker"><span class="no">09</span> Get started</p>
+        <h2>Request a free quote.</h2>
+        <p class="lede">Tell us about your project — attach a photo if you have one. You'll hear back fast with a fair estimate. No pressure, no obligation.</p>
+        <a class="callbig" href="tel:+19202057788"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>(920) 205-7788</a>
+        <ul class="assure">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Fast, fair estimates</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>One point of contact, start to finish</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Locally owned &amp; five-star rated</li>
+        </ul>
+      </div>
+
+      <form class="card" id="quoteForm" novalidate>
+        <div class="fgrid">
+          <div class="field">
+            <label for="name">Name <span class="req">*</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" required placeholder="Jane Doe" />
+          </div>
+          <div class="field">
+            <label for="phone">Phone <span class="req">*</span></label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" required placeholder="(920) 555-0123" />
+          </div>
+          <div class="field">
+            <label for="email">Email <span class="opt">(optional)</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@email.com" />
+          </div>
+          <div class="field">
+            <label for="zip">Address / ZIP <span class="req">*</span></label>
+            <input id="zip" name="zip" type="text" required placeholder="Appleton, 54911" />
+          </div>
+          <div class="field full">
+            <label for="service">Service needed <span class="req">*</span></label>
+            <select id="service" name="service" required>
+              <option value="" disabled selected>Choose a service…</option>
+              <option>Drywall &amp; Repairs</option>
+              <option>Interior Painting</option>
+              <option>Remodeling (Kitchen / Bath / Basement)</option>
+              <option>Flooring</option>
+              <option>Plumbing Repairs</option>
+              <option>Furniture Assembly</option>
+              <option>Storm / Tree Damage</option>
+              <option>General Handyman</option>
+              <option>Something else / not sure</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="desc">Project description <span class="req">*</span></label>
+            <textarea id="desc" name="desc" required placeholder="What needs doing? A few details help us give an accurate quote."></textarea>
+          </div>
+          <div class="field full">
+            <label>Photos <span class="opt">(optional — a photo helps a lot)</span></label>
+            <label for="photos" class="dropzone"><span class="mono">Attach photos</span>Snap a picture of the problem — it speeds up your estimate.<input id="photos" name="photos" type="file" accept="image/*" multiple hidden /></label>
+          </div>
+          <div class="field">
+            <label for="contact">Preferred contact <span class="opt">(optional)</span></label>
+            <select id="contact" name="contact">
+              <option value="" disabled selected>No preference</option>
+              <option>Call</option><option>Text</option><option>Email</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="time">Best time <span class="opt">(optional)</span></label>
+            <select id="time" name="time">
+              <option value="" disabled selected>Any time</option>
+              <option>Morning</option><option>Afternoon</option><option>Evening</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary submit" type="submit">Send My Request</button>
+        <p class="fineprint">By submitting, you agree to be contacted about your project. We never share your info.</p>
+      </form>
+
+      <div class="card form-success" id="formSuccess" role="status" aria-live="polite" style="grid-column:auto;">
+        <div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3>Request received.</h3>
+        <p>Thanks — your project's in. Ryan will reach out within one business day. Need it sooner? Call <a href="tel:+19202057788" style="color:var(--accent);font-weight:700;text-decoration:none;">(920) 205-7788</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap foot-in">
+      <div>
+        <a class="brand" href="#top" style="text-decoration:none;"><span class="mark">RSVP&nbsp;<b>Works</b></span> <span class="llc">LLC</span></a>
+        <p class="fmeta" style="margin-top:10px;">Done is the new Perfect.<br/>Handyman &amp; home improvement · Fox Valley, WI</p>
+      </div>
+      <div class="fmeta">
+        <a class="fcall" href="tel:+19202057788">(920) 205-7788</a><br/>
+        Appleton &amp; the Fox Cities<br/>
+        Mon–Sat · Free quotes
+      </div>
+    </div>
+    <div class="wrap">
+      <p class="draft-note">DRAFT / PITCH BUILD — Placeholders to verify with Ryan before launch: About bio &amp; portrait photo, exact service-area cities &amp; radius, business hours, project-gallery photos, email address. The quote form is a visual mock — wire it to a GoHighLevel native form so submissions land in your contacts &amp; pipeline.</p>
+    </div>
+  </footer>
+</main>
+
+<script>
+  (function () {
+    // ---- theme toggle ----
+    var root = document.documentElement;
+    var btn = document.getElementById('themebtn');
+    var sun = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+    var moon = document.getElementById('ic-moon').outerHTML;
+    function prefersDark(){ return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+    function isDark(){ var t = root.getAttribute('data-theme'); return t ? t === 'dark' : prefersDark(); }
+    function paint(){ btn.innerHTML = isDark() ? sun : moon; }
+    paint();
+    btn.addEventListener('click', function () {
+      root.setAttribute('data-theme', isDark() ? 'light' : 'dark');
+      paint();
+    });
+
+    // ---- form (client-side demo) ----
+    var form = document.getElementById('quoteForm');
+    var success = document.getElementById('formSuccess');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      form.style.display = 'none';
+      success.classList.add('on');
+      success.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth', block: 'center' });
+    });
+    function prefersReduced(){ return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+    // ---- photo filename hint ----
+    var photos = document.getElementById('photos');
+    var drop = photos.closest('.dropzone');
+    photos.addEventListener('change', function () {
+      var n = photos.files.length;
+      drop.querySelector('.mono').textContent = n ? (n + ' photo' + (n>1?'s':'') + ' attached') : 'Attach photos';
+    });
+  })();
+</script>
